@@ -202,10 +202,10 @@ class FER2013Trainer(Trainer):
 
         self._checkpoint_path = os.path.join(
             self._checkpoint_dir,
-            "{}_{}_{}".format(
+            "{}_{}_{}.pth".format(
                 self._configs["arch"],
                 self._configs["model_name"],
-                self._start_time.strftime("%Y%b%d_%H.%M"),
+                self._start_time.strftime("%Y%b%d_%H_%M"),
             ),
         )
 
