@@ -76,7 +76,8 @@ def get_dataset(configs):
     """
     This function get raw dataset
     """
-    from utils.datasets.fer2013dataset import fer2013
+#     from utils.datasets.fer2013dataset import fer2013
+    from utils.datasets.fer2013dataset_image import fer2013
 
     # todo: add transform
     train_set = fer2013("train", configs)

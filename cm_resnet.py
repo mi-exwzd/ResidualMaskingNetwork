@@ -18,14 +18,11 @@ from torchvision.transforms import transforms
 
 # for consistent latex font
 from matplotlib import rc
-from matplotlib import rcParams
 
 # rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 ## for Palatino and other serif fonts use:
 # rc('font',**{'family':'serif','serif':['Palatino']})
-# rc('font',**{'family':'serif','serif':['Computer Modern Roman']})
-# rcParams["font.family"] = "sans-serif"
-# rcParams["font.sans-serif"] = ["Computer Modern Sans"]
+# rc("font", **{"family": "serif", "serif": ["Computer Modern Roman"]})
 # rc("text", usetex=True)
 
 seed = 1234
@@ -38,6 +35,7 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 
+from models import resatt18
 # from utils.datasets.fer2013dataset import fer2013
 from utils.datasets.fer2013dataset_image import fer2013
 from utils.generals import make_batch
@@ -84,9 +82,7 @@ def plot_confusion_matrix(
     plt.tight_layout()
 
 
-# checkpoint_name = "resmasking_dropout1_test_2022Jan25_05_12.pth"
-checkpoint_name = "resmasking_dropout1_rot30_2019Nov17_14.33"
-# checkpoint_name = 'Z_resmasking_dropout1_rot30_2019Nov30_13.32'
+checkpoint_name = "resnet34_test_2022Jan27_08_20.pth"
 
 
 def main():
@@ -94,14 +90,12 @@ def main():
         configs = json.load(f)
 
     acc = 0.0
-#     state = torch.load("./checkpoint/{}".format(checkpoint_name))
-    state = torch.load("./pretrained_model/{}".format(checkpoint_name))
+    state = torch.load("./checkpoint/{}".format(checkpoint_name))
 
-#     from models import resmasking
-#     model = resmasking
-    
-    from models import resmasking_dropout1
-    model = resmasking_dropout1
+    from models import basenet, densenet121, resnet18, resmasking_dropout1, resnet34
+
+#     model = resnet18
+    model = resnet34
 
     model = model(in_channels=3, num_classes=7).cuda()
     model.load_state_dict(state["net"])
@@ -136,6 +130,11 @@ def main():
             all_target.append(targets)
             all_output.append(outputs)
 
+            # if len(np.unique(all_target)) == 7:
+            #     break
+            # if idx == 10:
+            #     break
+
     acc = 100. * correct / total
     print("Accuracy {:.03f}".format(acc))
 
@@ -151,14 +150,13 @@ def main():
         classes=class_names,
         normalize=True,
         # title='{} \n Accuracc: {:.03f}'.format(checkpoint_name, acc)
-        title="Residual Masking Network",
+        title="Resnet34",
     )
 
     # plt.show()
     # plt.savefig('cm_{}.png'.format(checkpoint_name))
-    plt.savefig("./saved/cm_{}.pdf".format(checkpoint_name))
+    plt.savefig("./result/cm_{}.pdf".format(checkpoint_name))
     plt.close()
-    print("save at ./saved/cm_{}.pdf".format(checkpoint_name))
 
 
 if __name__ == "__main__":
